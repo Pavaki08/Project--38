@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js" crossorigin=""></script>
+<script src="https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/e2f4b47e-36b2-4945-aa20-053799f6f99d.js" crossorigin=""></script>
+    
+    
+
+  <!--<base href="https://editor.p5js.org/bloggerspavaki08/sketches/4SQxUjtBl/">--><base href="."><style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
+canvas {
+  display: block;
+}
+</style><script src="https://editor.p5js.org/previewScripts.js"></script><style data-emotion=""></style><script>
+    function getScriptOff(line) {
+      var offs = [[72,"sketch"]];
+      var l = 0;
+      var file = '';
+      for (var i=0; i<offs.length; i++) {
+        var n = offs[i][0];
+        if (n < line && n > l) {
+          l = n;
+          file = offs[i][1];
+        }
+      }
+      return [line - l, file];
+    }
+    // catch reference errors, via http://stackoverflow.com/a/12747364/2994108
+    window.onerror = function (msg, url, lineNumber, columnNo, error) {
+        var string = msg.toLowerCase();
+        var substring = "script error";
+        var data = {};
+        if (url.match(/^(http:\/\/|https:\/\/)/) !== null && error.stack){
+          var errorNum = error.stack.split('about:srcdoc:')[1].split(':')[0];
+          var fileInfo = getScriptOff(errorNum);
+          data = msg + ' (' + fileInfo[1] + ': line ' + fileInfo[0] + ')';
+        } else {
+          var fileInfo = getScriptOff(lineNumber);
+          data = msg + ' (' + fileInfo[1] + ': line ' + fileInfo[0] + ')';
+        }
+        window.parent.postMessage([{
+          log: [{
+            method: 'error',
+            data: [data],
+            id: Date.now().toString()
+          }],
+          source: fileInfo[1]
+        }], '*');
+      return false;
+    };
+    // catch rejected promises
+    window.onunhandledrejection = function (event) {
+      if (event.reason && event.reason.message && event.reason.stack){
+        var errorNum = event.reason.stack.split('about:srcdoc:')[1].split(':')[0];
+        var fileInfo = getScriptOff(errorNum);
+        var data = event.reason.message + ' (' + fileInfo[1] + ': line ' + fileInfo[0] + ')';
+        window.parent.postMessage([{
+          log: [{
+            method: 'error',
+            data: [data],
+            id: Date.now().toString()
+          }],
+          source: fileInfo[1]
+        }], '*');
+      }
+    };
+  </script></head>
+  <body>
+      <script data-tag="@fs-sketch.js">var bird, birdImage;
+var ground, groundImage;
+var cloud, cloudImg;
+var cloudGroup;
+var point, pointImage;
+var pointGroup;
+var gameover;
+var score = 0;
+var x1 = 0;
+var x2;
+var scrollSpeed = 2;
+var gainer, gainerImg;
+var gainerGroup;
+var gameState = 1;
+var gameOver;
+var play = 0,
+  end = 1,
+  gameState = 0;
+var gameOver, restart, Image;
+
+function preload() {
+  birdImage = loadImage("https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/e714bc21-bbd7-4a8f-835e-4c3c706d6002.png");
+  cloudImage = loadImage("https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/d533c0be-7d33-4ac1-9441-5470a052ec43.png");
+  groundImage = loadImage("https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/096f3d65-de49-4085-a0e6-8c9b983b47aa.jpg");
+  pointImage = loadImage("https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/608a243a-1ecf-4130-badf-ead4294427eb.png");
+  gainerImg = loadImage("https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/dfaec172-1432-46b6-b136-6c29d23a3318.png");
+  gameOverImage = loadImage("https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/20971cf6-00d8-4bdc-a7a0-7526c5fb0a52.png")
+  restartImage = loadImage("https://assets.editor.p5js.org/5f64c9dd39b89600201ce1c0/6b2f29fa-5f7d-4b7b-b4ed-000f956f9574.png")
+}
+
+function setup() {
+  createCanvas(500, 300);
+  x2 = width;
+
+  gameOver = createSprite(250, 130, 10, 10);
+  gameOver.addImage(gameOverImage);
+  gameOver.scale = 0.7;
+  gameOver.visible = false;
+
+  restart = createSprite(250, 215, 10, 10);
+  restart.addImage(restartImage);
+  restart.scale = 0.2;
+  restart.visible = false;
+
+
+
+  bird = createSprite(50, 10, 20, 50);
+  bird.addImage(birdImage);
+  bird.scale = 0.07;
+
+  pointGroup = createGroup();
+  gainerGroup = createGroup();
+}
+
+function draw() {
+  background(0);
+
+
+
+
+  if (gameState == 0) {
+    if (bird.isTouching(pointGroup)) {
+      score = score + 1;
+      pointGroup.destroyEach();
+    }
+    //if(bird.y>height){gameState=gameOver;}
+
+    if (bird.isTouching(gainerGroup) || bird.y > 300) {
+      gameState = "end";
+      gainerGroup.destroyEach();
+    }
+
+    if (keyDown("space")) {
+      bird.velocityY = -10;
+    }
+    bird.velocityY = bird.velocityY + 0.8
+    image(groundImage, x1, 0, width, height);
+    image(groundImage, x2, 0, width, height);
+    x1 -= scrollSpeed;
+    x2 -= scrollSpeed;
+    if (x1 <= -width) {
+      x1 = width;
+    }
+    if (x2 <= -width) {
+      x2 = width;
+    }
+    spawnPoint();
+    spawnGainer();
+  } else if (gameState === "end") {
+    image(groundImage, 0, 0, width, height);
+    bird.visible = false;
+    gameOver.visible = true;
+    restart.visible = true;
+    pointGroup.destroyEach();
+    gainerGroup.destroyEach();
+    if (mousePressedOver(restart)) {
+      reset();
+    }
+  }
+ 
+
+
+
+  fill("white");
+  text("CHILIES : " + score, 430, 20);
+
+  drawSprites();
+
+}
+
+function spawnPoint() {
+
+  if (frameCount % 100 === 0) {
+    point = createSprite(600, 300, 30, 50);
+    point.addImage(pointImage)
+    point.y = Math.round(random(0, 200))
+    point.scale = 0.2;
+    point.velocityX = -5;
+    point.lifetime = 120;
+    pointGroup.add(point);
+
+
+  }
+}
+
+
+function spawnGainer() {
+  if (frameCount % 80 === 0) {
+    gainer = createSprite(600, 300, 30, 50);
+    gainer.addImage(gainerImg)
+    gainer.y = Math.round(random(0, 200))
+    gainer.scale = 0.1;
+    gainer.velocityX = -5;
+    gainer.lifetime = 120;
+    gainerGroup.add(gainer);
+  }
+}
+
+function reset() {
+  gameState = play;
+  bird.visible = true;
+  bird.scale = 0.07 ;
+  bird.y=10;
+  gameOver.visible = false;
+  restart.visible = false;
+  score = 0;
+  health = 2;
+
+}</script>
+  
+
+<canvas id="defaultCanvas0" class="p5Canvas" width="500" height="300" style="width: 500px; height: 300px;"></canvas></body></html>
